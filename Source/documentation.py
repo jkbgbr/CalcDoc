@@ -3,39 +3,87 @@
 The module holding information on the whole documentation
 """
 
-from reportlab.platypus import SimpleDocTemplate, Spacer, Paragraph, PageBreak, Table, Frame, PageTemplate, \
-    TableStyle, Preformatted, CondPageBreak, Image
-from reportlab.lib import colors, utils
-from Source.settings import TOP_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN, LEFT_MARGIN, PAGE_SIZE
 import logging
-import datetime
+import os
+
+from reportlab.platypus import SimpleDocTemplate
+
+from Source import styles
+from Source.header_footer import glatt_footer, glatt_header
+from Source.settings import TOP_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN, LEFT_MARGIN, PAGE_SIZE
 
 logger = logging.getLogger('documentation')
+
+doku_styles = styles.set_style()
 
 
 class Documentation:
 
-    def __init__(self, filename=None, first_page=None, later_pages=None):
-        self.filename = filename  # the name of the file to be written
-        self.first_page = first_page
-        self.later_pages = later_pages
-        self.base_data = {}
+    def __init__(self, filename=None, first_page=None, later_pages=None, header_data=None):
+        """
 
-    def generate_report(self):
-        doc = SimpleDocTemplate(filename=self.filename,
-                                rightMargin=RIGHT_MARGIN,
-                                leftMargin=LEFT_MARGIN,
-                                topMargin=TOP_MARGIN,
-                                bottomMargin=BOTTOM_MARGIN,
-                                pagesize=PAGE_SIZE)
-        logger.info('Report saved at: %s' % self.filename)
+        :param filename: the name of file to be written
+        :type filename: str
+        :param first_page: the method creating the content on the first page
+        :type first_page:
+        :param later_pages: the method creating the headers and footer on later pages
+        :type later_pages:
+        :param header_data: dict with fields 'job_number', 'customer', 'vessel_name'
+        :type header_data:
+        """
+        self._filename = filename  # sets the filename
+        self.first_page = first_page(self)
+        self.later_pages = later_pages(self)
+        self.header_data = header_data  # the dict containing the information to be put in the header
+        self.story = []
+
+        assert all(x in self.header_data.keys() for x in ('job_number', 'customer', 'vessel_name'))
+
+    @property
+    def filename(self):
+        if self._filename.endswith('.pdf'):
+            return self._filename
+        else:
+            self._filename = '.'.join((self._filename, 'pdf'))
+            return self._filename
+
+    def generate(self):
+        """
+        Generates the document.
+        If a document with this name already exists, it will be overwritten.
+        If the document is open, the new document will be created with the same name,
+        starting with an underline.
+        """
+        doctemplate = SimpleDocTemplate(filename=self.filename,
+                                        rightMargin=RIGHT_MARGIN,
+                                        leftMargin=LEFT_MARGIN,
+                                        topMargin=TOP_MARGIN,
+                                        bottomMargin=BOTTOM_MARGIN,
+                                        pagesize=PAGE_SIZE,
+                                        showBoundary=False)
         # Draw things on the PDF. Here's where the PDF generation happens.
         # See the ReportLab documentation for the full list of functionality.
         # Our container for 'Flowable' objects
         # todo
-        elements = []
-        doc.build(elements, onLaterPages=self.later_pages.make_header_footer)
-        logger.info('Documentation created')
+
+        # trying to delete the old file
+        try:
+            os.unlink(self.filename)
+        except PermissionError:  # currently open - we create the file under a modified name until we succeed
+            self._filename = ''.join(('_', self._filename))
+            self.generate()  # start over
+            return
+        except FileNotFoundError:  # not found
+            # the file was prevoiusly nonexistent. nothing to do, as it will be re-created
+            pass
+
+        # building
+        doctemplate.build(self.story, onLaterPages=self.later_pages.make_header_footer)
+        logger.info('Documentation created. Filename: %s' % self.filename)
+
+    def extend_story(self, added=None):
+        """Use this to add content to the document"""
+        self.story.append(added)
 
 
 class Page:
@@ -59,55 +107,14 @@ class LaterPages(Page):
         super(LaterPages, self).__init__(documentation)
 
     def make_header_footer(self, canvas, doc):
-        def glatt_header():
-            logger.debug('Starting to create the header')
-
-            d = self.documentation.base_data['job']
-
-            _txt = [['Michael Glatt', '', ''],
-                    ['Maschinenbau GmbH', 'Auftragsnummer: %s' % d['job_no'],
-                     '%s' % datetime.datetime.now().strftime("%d.%m.%Y %H:%M")],
-                    ['Industriestrasse 2', 'Kunde: %s' % d['customer'], 'Bearbeiter: %s' % 'GJ'],
-                    ['D-93326 Abensberg', 'Projekt: %s' % d['vessel'], 'Seite']
-                    ]
-
-            _hsi = TableStyle([
-                ('FONT', (0, 0), (-1, -1), 'Courier'),
-                ('FONT', (0, 0), (0, 0), 'Courier-Bold'),
-            ])
-
-            _hs = TableStyle([
-                ('LINEBELOW', (0, 0), (-1, 0), 0.5, colors.black),
-                # ('BOX', (0, 0), (-1, -1), 0.5, colors.black),  # for debugging
-            ])
-
-            cw = doc.width / 3.
-            Ti = Table(_txt, [cw - 10 * mm, cw + 25 * mm, cw - 30 * mm], 4 * [4 * mm])
-            Ti.setStyle(_hsi)  # einstellung der Styl
-            T = Table([[Ti]])
-            T.setStyle(_hs)  # einstellung der Styl
-            logger.debug('Header created')
-            return T
-
-        def glatt_footer():
-            logger.debug('Starting to create the footer')
-            P = Paragraph('P/NP %s, Copyright Michael Glatt Maschinenbau GmbH.' % NP_VERSION, doku_styles['FooterText'])
-            _fs = TableStyle([
-                ('LINEABOVE', (0, 0), (-1, 0), 0.5, colors.black),
-                # ('BOX', (0, 0), (-1, -1), 0.5, colors.black),  # for debugging
-            ])  # line over the footer
-            T = Table([[P]])  # put P in T
-            T.setStyle(_fs)  # einstellung der Styl
-            logger.debug('Footer created')
-            return T
 
         # Save the state of our canvas so we can draw on it
         canvas.saveState()
 
         # Header
-        header = glatt_header()
+        header = glatt_header(self.documentation.header_data)
         w, h = header.wrap(doc.width, doc.topMargin)
-        header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - h)
+        header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - doc.bottomMargin)
 
         # Footer
         footer = glatt_footer()

@@ -4,11 +4,13 @@ settings and definitions to be used
 """
 
 from reportlab.lib.units import mm
-from reportlab.lib.pagesizes import A4
 
 # page size, mirror dimensions
-PAGE_SIZE = A4
-LEFT_MARGIN = 1.9 * mm
-TOP_MARGIN = 1.9 * mm
-RIGHT_MARGIN = 1.32 * mm
-BOTTOM_MARGIN = 3.67 * mm
+PAGE_SIZE = 210 * mm, 297 * mm
+LEFT_MARGIN = 25.4 * mm
+TOP_MARGIN = 25.4 * mm
+RIGHT_MARGIN = 12.7 * mm
+BOTTOM_MARGIN = 11.7 * mm
+
+APPNAME = 'perZEUS'
+VERSION = '0.1 beta'
