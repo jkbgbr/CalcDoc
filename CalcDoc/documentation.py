@@ -75,9 +75,9 @@ class Documentation:
         :param header_data: dict with fields 'job_number', 'customer', 'vessel_name'
         :type header_data:
         """
-        self._filename = filename  # sets the filename
         self.first_page = FirstPage(self)
         self.later_pages = LaterPages(self)
+        self._filename = filename  # sets the filename
         self.header_data = header_data  # the dict containing the information to be put in the header
         self.story = []
 
@@ -114,7 +114,8 @@ class Documentation:
         try:
             os.unlink(self.filename)
         except PermissionError:  # currently open - we create the file under a modified name until we succeed
-            self._filename = ''.join(('_', self._filename))
+            filename, ext = os.path.splitext(self._filename)
+            self._filename = ''.join((filename, '_', ext))
             self.generate()  # start over
             return
         except FileNotFoundError:  # not found
@@ -143,3 +144,5 @@ class SimpleDocumentation(Documentation):
 
     def __init__(self, filename=None, header_data=None):
         super(SimpleDocumentation, self).__init__(filename=filename, header_data=header_data)
+        self.first_page = LaterPages(self)
+        self.later_pages = LaterPages(self)
