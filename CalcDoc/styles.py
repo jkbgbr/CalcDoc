@@ -15,15 +15,9 @@ def set_style():
     # and set all 'Courier' to 'Courier New'
 
     # titel, subtitel
-    styl.add(ParagraphStyle(name='Titel', leading=15, fontSize=12, fontName='Helvetica-Bold', alignment=TA_CENTER,
+    styl.add(ParagraphStyle(name='Title', leading=15, fontSize=12, fontName='Helvetica-Bold', alignment=TA_CENTER,
                             spaceBefore=15, allowWidows=1))
-    styl.add(ParagraphStyle(name='Subtitle', leading=15, fontSize=10, fontName='Helvetica-Bold', alignment=TA_CENTER,
-                            spaceBefore=10, allowWidows=1))
-    # text
-    styl.add(ParagraphStyle(name='TextNormalleft', leftIndent=5, leading=11, fontSize=9, fontName='Courier',
-                            alignment=TA_LEFT))
-    styl.add(ParagraphStyle(name='TextNormalleft_indented', leftIndent=20, leading=11, fontSize=9, fontName='Courier',
-                            alignment=TA_LEFT))
+    styl.add(ParagraphStyle(name='SubTitle', leading=13, fontSize=11, fontName='Courier', alignment=TA_CENTER))
     styl.add(ParagraphStyle(name='HeadingA', leading=12, fontSize=10, fontName='Helvetica-Bold', alignment=TA_LEFT,
                             spaceBefore=10, spaceAfter=5))
     styl.add(ParagraphStyle(name='HeadingB', leading=12, fontSize=10, fontName='Helvetica-Bold', alignment=TA_LEFT,
@@ -31,10 +25,19 @@ def set_style():
     styl.add(
         ParagraphStyle(name='HeadingC', leftIndent=10, leading=12, fontSize=10, fontName='Helvetica', alignment=TA_LEFT,
                        spaceBefore=2, spaceAfter=3))
-    styl.add(
-        ParagraphStyle(name='nozzlename', leftIndent=0, leading=9, fontSize=7, fontName='Courier', alignment=TA_CENTER))
 
-    styl.add(ParagraphStyle(name='SubTitel', leading=13, fontSize=11, fontName='Courier', alignment=TA_CENTER))
+    # styl.add(ParagraphStyle(name='Subtitle', leading=15, fontSize=10, fontName='Helvetica-Bold', alignment=TA_CENTER,
+    #                         spaceBefore=10, allowWidows=1))
+    # text
+    # styl.add(ParagraphStyle(name='TextNormalleft', leftIndent=5, leading=11, fontSize=9, fontName='Courier',
+    #                         alignment=TA_LEFT))
+    # styl.add(ParagraphStyle(name='TextNormalleft_indented', leftIndent=20, leading=11, fontSize=9, fontName='Courier',
+    #                         alignment=TA_LEFT))
+    #
+    # styl.add(
+    #     ParagraphStyle(name='nozzlename', leftIndent=0, leading=9, fontSize=7, fontName='Courier', alignment=TA_CENTER))
+
+
 
     # # Abschnitt titel
     # styl.add(ParagraphStyle(name='HeadingA', leading=12, fontSize=10, fontName='Helvetica-Bold', alignment=TA_LEFT, spaceBefore=5, spaceAfter=0))
