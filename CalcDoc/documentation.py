@@ -25,6 +25,9 @@ class Page:
     def make_header_footer(self, canvas, doc):
         raise NotImplementedError
 
+    def do_nothing(self, canvas, doc):
+        pass
+
 
 class FirstPage(Page):
 
@@ -56,22 +59,25 @@ class LaterPages(Page):
 
 
 class Documentation:
+    """
+    This is the "full-blown" documentation that has a first page and later pages.
+    This is to be used for a "volle Doku"
+    """
 
-    def __init__(self, filename=None, first_page=FirstPage, later_pages=LaterPages, header_data=None):
+    build_first = 'do_nothing'
+    build_later = 'make_header_footer'
+
+    def __init__(self, filename=None, header_data=None):
         """
 
         :param filename: the name of file to be written
         :type filename: str
-        :param first_page: the method creating the content on the first page
-        :type first_page:
-        :param later_pages: the method creating the headers and footer on later pages
-        :type later_pages:
         :param header_data: dict with fields 'job_number', 'customer', 'vessel_name'
         :type header_data:
         """
         self._filename = filename  # sets the filename
-        self.first_page = first_page(self)
-        self.later_pages = later_pages(self)
+        self.first_page = FirstPage(self)
+        self.later_pages = LaterPages(self)
         self.header_data = header_data  # the dict containing the information to be put in the header
         self.story = []
 
@@ -116,9 +122,24 @@ class Documentation:
             pass
 
         # building
-        doctemplate.build(self.story, onLaterPages=self.later_pages.make_header_footer)
+        doctemplate.build(self.story,
+                          onFirstPage=getattr(self.first_page, self.build_first),
+                          onLaterPages=getattr(self.later_pages, self.build_later)
+                          )
         logger.info('Documentation created. Filename: %s' % self.filename)
 
     def extend_story(self, added=None):
         """Use this to add content to the document"""
         self.story.append(added)
+
+
+class SimpleDocumentation(Documentation):
+    """
+    This is the "simplified" documentation that has no first pages, ideal for single calculations.
+    """
+
+    build_first = 'make_header_footer'
+    build_later = 'make_header_footer'
+
+    def __init__(self, filename=None, header_data=None):
+        super(SimpleDocumentation, self).__init__(filename=filename, header_data=header_data)
