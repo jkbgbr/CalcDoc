@@ -8,18 +8,56 @@ import os
 
 from reportlab.platypus import SimpleDocTemplate
 
-from Source import styles
-from Source.header_footer import glatt_footer, glatt_header
-from Source.settings import TOP_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN, LEFT_MARGIN, PAGE_SIZE
+from CalcDoc import styles
+from CalcDoc.header_footer import glatt_footer, glatt_header
+from CalcDoc.settings import TOP_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN, LEFT_MARGIN, PAGE_SIZE
 
 logger = logging.getLogger('documentation')
 
 doku_styles = styles.set_style()
 
 
+class Page:
+
+    def __init__(self, documentation=None):
+        self.documentation = documentation
+
+    def make_header_footer(self, canvas, doc):
+        raise NotImplementedError
+
+
+class FirstPage(Page):
+
+    def __init__(self, documentation):
+        super(FirstPage, self).__init__(documentation)
+
+
+class LaterPages(Page):
+
+    def __init__(self, documentation=None):
+        super(LaterPages, self).__init__(documentation)
+
+    def make_header_footer(self, canvas, doc):
+        # Save the state of our canvas so we can draw on it
+        canvas.saveState()
+
+        # Header
+        header = glatt_header(self.documentation.header_data)
+        w, h = header.wrap(doc.width, doc.topMargin)
+        header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - doc.bottomMargin)
+
+        # Footer
+        footer = glatt_footer()
+        w, h = footer.wrap(doc.width, doc.bottomMargin)
+        footer.drawOn(canvas, doc.leftMargin, h)
+
+        # Release the canvas
+        canvas.restoreState()
+
+
 class Documentation:
 
-    def __init__(self, filename=None, first_page=None, later_pages=None, header_data=None):
+    def __init__(self, filename=None, first_page=FirstPage, later_pages=LaterPages, header_data=None):
         """
 
         :param filename: the name of file to be written
@@ -84,42 +122,3 @@ class Documentation:
     def extend_story(self, added=None):
         """Use this to add content to the document"""
         self.story.append(added)
-
-
-class Page:
-
-    def __init__(self, documentation=None):
-        self.documentation = documentation
-
-    def make_header_footer(self, canvas, doc):
-        raise NotImplementedError
-
-
-class FirstPage(Page):
-
-    def __init__(self, documentation):
-        super(FirstPage, self).__init__(documentation)
-
-
-class LaterPages(Page):
-
-    def __init__(self, documentation=None):
-        super(LaterPages, self).__init__(documentation)
-
-    def make_header_footer(self, canvas, doc):
-
-        # Save the state of our canvas so we can draw on it
-        canvas.saveState()
-
-        # Header
-        header = glatt_header(self.documentation.header_data)
-        w, h = header.wrap(doc.width, doc.topMargin)
-        header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - doc.bottomMargin)
-
-        # Footer
-        footer = glatt_footer()
-        w, h = footer.wrap(doc.width, doc.bottomMargin)
-        footer.drawOn(canvas, doc.leftMargin, h)
-
-        # Release the canvas
-        canvas.restoreState()

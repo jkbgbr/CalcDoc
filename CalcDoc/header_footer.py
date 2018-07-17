@@ -7,8 +7,8 @@ from reportlab.lib import colors
 from reportlab.lib.units import mm
 from reportlab.platypus import Paragraph, Table, TableStyle
 
-from Source import styles
-from Source.settings import APPNAME, VERSION, PAGE_SIZE, RIGHT_MARGIN, LEFT_MARGIN
+from CalcDoc import styles
+from CalcDoc.settings import APPNAME, VERSION, PAGE_SIZE, RIGHT_MARGIN, LEFT_MARGIN
 
 doku_styles = styles.set_style()
 
@@ -36,9 +36,9 @@ def glatt_header(header_data=None):
 
     cw = (PAGE_SIZE[0] - RIGHT_MARGIN - LEFT_MARGIN) / 3.
     ti = Table(_txt, [cw - 10 * mm, cw + 25 * mm, cw - 30 * mm], 4 * [4 * mm])
-    ti.setStyle(_hsi)  # einstellung der Styl
-    t = Table([[ti]])
-    t.setStyle(_hs)  # einstellung der Styl
+    ti.setStyle(tblstyle=_hsi)  # einstellung der Styl
+    t = Table(data=[[ti]])
+    t.setStyle(tblstyle=_hs)  # einstellung der Styl
     return t
 
 
