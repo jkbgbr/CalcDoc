@@ -6,6 +6,7 @@ The module holding information on the whole documentation
 import logging
 import os
 
+from reportlab.platypus import Paragraph
 from reportlab.platypus import SimpleDocTemplate
 
 from CalcDoc import styles
@@ -131,7 +132,9 @@ class Documentation:
 
     def extend_story(self, added=None):
         """Use this to add content to the document"""
-        self.story.append(added)
+
+        if added.contentclass == 'Paragraph':
+            self.story.append(Paragraph(**added.content))
 
 
 class SimpleDocumentation(Documentation):
