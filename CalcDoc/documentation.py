@@ -131,10 +131,22 @@ class Documentation:
         logger.info('Documentation created. Filename: %s' % self.filename)
 
     def extend_story(self, added=None):
-        """Use this to add content to the document"""
+        """
+        Use this to add content to the document.
+        Expected is a namedtuple with the fields
+        .flowable describing the platypus object to use. THIS IS A MUST.
+        .content (or any other name) with the additional data to be provided for the flowable for instantiation
 
-        if added.contentclass == 'Paragraph':
-            self.story.append(Paragraph(**added.content))
+        """
+
+        if added.flowable == 'Paragraph':
+            self.story.append(Paragraph(style=doku_styles[added.content.style], text=added.content.text))
+
+        elif added.flowable == 'Table':
+            self.story.append(added.content)
+
+        else:
+            print('Unknown flowable: %s' % added.flowable)
 
 
 class SimpleDocumentation(Documentation):

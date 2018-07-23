@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'jkbgbr'
 
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle, TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 
 def set_style():
@@ -50,6 +51,27 @@ def set_style():
                             fontSize=9,
                             fontName='Courier',
                             alignment=TA_LEFT))
+
+    # Table styles
+    styl.add(ParagraphStyle(name='TableTextLeft',
+                            leftIndent=2,
+                            leading=12,
+                            fontSize=9,
+                            fontName='Courier',
+                            alignment=TA_LEFT))
+    styl.add(ParagraphStyle(name='TableTextRight',
+                            rightIndent=2,
+                            leading=12,
+                            fontSize=9,
+                            fontName='Courier',
+                            alignment=TA_RIGHT))
+    styl.add(ParagraphStyle(name='TableTextCenter',
+                            leftIndent=0,
+                            rightIndent=0,
+                            leading=12,
+                            fontSize=9,
+                            fontName='Courier',
+                            alignment=TA_CENTER))
 
     # styl.add(ParagraphStyle(name='Subtitle', leading=15, fontSize=10, fontName='Helvetica-Bold', alignment=TA_CENTER,
     #                         spaceBefore=10, allowWidows=1))
