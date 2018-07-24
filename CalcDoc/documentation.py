@@ -92,6 +92,9 @@ class Documentation:
             self._filename = '.'.join((self._filename, 'pdf'))
             return self._filename
 
+    def clear_story(self):
+        self.story = []
+
     def generate(self):
         """
         Generates the document.
