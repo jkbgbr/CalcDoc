@@ -146,7 +146,11 @@ class Documentation:
         """
 
         if added.flowable == 'Paragraph':
-            self.story.append(Paragraph(style=doku_styles[added.content.style], text=added.content.text))
+            if added.content.style == '_HeadingC':
+                _text = '<u>%s</u>' % added.content.text
+            else:
+                _text = added.content.text
+            self.story.append(Paragraph(style=doku_styles[added.content.style], text=_text))
 
         elif added.flowable == 'Table':
             self.story.append(added.content)

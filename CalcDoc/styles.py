@@ -37,6 +37,8 @@ def set_style():
                             alignment=TA_LEFT,
                             spaceBefore=5,
                             spaceAfter=0))
+
+    # _HeadingC underline is done as in-line formatting when generating the document
     styl.add(ParagraphStyle(name='_HeadingC',
                             leftIndent=10,
                             leading=12,
