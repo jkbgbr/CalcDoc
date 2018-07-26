@@ -84,6 +84,9 @@ class Documentation:
 
         assert all(x in self.header_data.keys() for x in ('job_number', 'customer', 'vessel_name'))
 
+    def __str__(self):
+        return '%s in %s' % (self.__class__.__name__, self._filename)
+
     @property
     def filename(self):
         if self._filename.endswith('.pdf'):
