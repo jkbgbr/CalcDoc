@@ -32,6 +32,7 @@ def set_style():
                             spaceAfter=5))
     styl.add(ParagraphStyle(name='_HeadingB',
                             leading=12,
+                            leftIndent=5,
                             fontSize=10,
                             fontName='Helvetica-Bold',
                             alignment=TA_LEFT,
