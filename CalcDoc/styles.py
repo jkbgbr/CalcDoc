@@ -45,7 +45,7 @@ def set_style():
                             fontSize=10,
                             fontName='Helvetica',
                             alignment=TA_LEFT,
-                            spaceBefore=2,
+                            spaceBefore=6,
                             spaceAfter=3))
     styl.add(ParagraphStyle(name='_SimpleText',
                             leftIndent=10,
