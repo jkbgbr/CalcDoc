@@ -22,7 +22,7 @@ def set_style():
                             alignment=TA_CENTER,
                             spaceBefore=15,
                             allowWidows=1))
-    styl.add(ParagraphStyle(name='_SubTitle', leading=13, fontSize=11, fontName='Courier', alignment=TA_CENTER))
+    styl.add(ParagraphStyle(name='_SubTitle', leading=13, fontSize=9, fontName='Courier', alignment=TA_CENTER))
     styl.add(ParagraphStyle(name='_HeadingA',
                             leading=12,
                             fontSize=10,
