@@ -134,7 +134,7 @@ class Documentation:
                           onFirstPage=getattr(self.first_page, self.build_first),
                           onLaterPages=getattr(self.later_pages, self.build_later)
                           )
-        logger.info('Documentation created. Filename: %s' % self.filename)
+        logger.debug('Documentation created. Filename: %s' % self.filename)
 
     def extend_story(self, added=None):
         """
